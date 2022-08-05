@@ -59,6 +59,8 @@ fn main() {
         // コンシューマーが、キューにメッセージが到着することを待ち、メッセージを処理
         while let Some(delivery) = consumer.next().await {
             info!(message=?delivery, "[CONSUMER] received message");
+            let message = String::from_utf8(delivery.as_ref().unwrap().data.clone()).unwrap();
+            info!("{}", format!("[CONSUMER] `{}` received", message));
             // メッセージを正常に処理したら、RabbitMQにメッセージを処理したことを示す肯定応答を返却
             if let Ok(delivery) = delivery {
                 delivery

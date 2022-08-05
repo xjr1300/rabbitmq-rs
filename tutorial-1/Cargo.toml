@@ -11,5 +11,10 @@ tracing = "0.1"
 tracing-subscriber = "0.3"
 
 [[bin]]
+name = "producer"
+path = "src/producer.rs"
+
+[[bin]]
 name = "consumer"
 path = "src/consumer.rs"
+
