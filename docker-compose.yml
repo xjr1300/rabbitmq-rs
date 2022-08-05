@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  my-queue:
+    container_name: rabbitmq-rs_rabbitmq
+    image: rabbitmq:latest
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - rabbitmq-rs_rabbitmq:/rabbitmq-rs_rabbitmq
+
+volumes:
+  rabbitmq-rs_rabbitmq:
