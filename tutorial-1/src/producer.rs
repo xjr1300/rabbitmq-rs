@@ -6,9 +6,7 @@ use lapin::{
     BasicProperties, Connection, ConnectionProperties,
 };
 
-mod definitions;
-
-use crate::definitions::{CONNECT_URL, QUEUE_NAME};
+use tutorial_1::{CONNECT_URL, QUEUE_NAME};
 
 fn main() {
     if std::env::var("RUST_LOG").is_err() {
