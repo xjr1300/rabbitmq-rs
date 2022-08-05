@@ -7,9 +7,7 @@ use lapin::{
 };
 use tracing::info;
 
-mod definitions;
-
-use crate::definitions::{CONNECT_URL, CONSUMER_TAG, QUEUE_NAME};
+use tutorial_1::{CONNECT_URL, CONSUMER_TAG, QUEUE_NAME};
 
 fn main() {
     if std::env::var("RUST_LOG").is_err() {
