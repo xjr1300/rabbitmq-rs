@@ -1,4 +1,4 @@
-# RabbitMQ and Rust
+# RabbitMQ Tutorial by Rust
 
 ## RabbitMQコンテナ
 
