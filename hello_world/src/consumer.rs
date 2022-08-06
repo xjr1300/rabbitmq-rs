@@ -7,7 +7,7 @@ use lapin::{
 };
 use tracing::info;
 
-use tutorial_1::{CONNECT_URL, CONSUMER_TAG, QUEUE_NAME};
+use hello_world::{CONNECT_URL, CONSUMER_TAG, QUEUE_NAME};
 
 fn main() {
     if std::env::var("RUST_LOG").is_err() {
@@ -22,14 +22,14 @@ fn main() {
         // RabbitMQに接続
         let conn = Connection::connect(&address, ConnectionProperties::default())
             .await
-            .expect("[CONSUMER] connection error");
-        info!("[CONSUMER] connected");
+            .expect("connection error");
+        info!("connected");
 
         // チャネルを作成
         let channel = conn.create_channel().await.expect("create channel error");
         info!(state=?conn.status().state());
 
-        // デフォルトエクスチェンジに接続したキューを定義
+        // キューを定義
         let queue = channel
             .queue_declare(
                 QUEUE_NAME,
@@ -37,12 +37,12 @@ fn main() {
                 FieldTable::default(),
             )
             .await
-            .expect("[CONSUMER] declare queue error");
+            .expect("declare queue error");
         info!(state=?conn.status().state());
-        info!(?queue, "[CONSUMER] declared queue");
+        info!(?queue, "declared queue");
 
         // キューにメッセージが到着することを待ち、メッセージを処理するコンシューマーを作成
-        info!("[CONSUMER] will consume");
+        info!("will consume");
         let mut consumer = channel
             .basic_consume(
                 QUEUE_NAME,
@@ -51,21 +51,21 @@ fn main() {
                 FieldTable::default(),
             )
             .await
-            .expect("[CONSUMER] basic consume error");
+            .expect("basic consume error");
         info!(state=?conn.status().state());
 
         // コンシューマーが、キューにメッセージが到着することを待ち、メッセージを処理
         while let Some(delivery) = consumer.next().await {
-            info!(message=?delivery, "[CONSUMER] received message");
+            info!(message=?delivery, "received message");
             let message = String::from_utf8(delivery.as_ref().unwrap().data.clone()).unwrap();
-            info!("{}", format!("[CONSUMER] `{}` received", message));
+            info!("{}", format!("`{}` received", message));
             // メッセージを正常に処理したら、RabbitMQにメッセージを処理したことを示す肯定応答を返却
             if let Ok(delivery) = delivery {
                 delivery
                     .ack(BasicAckOptions::default())
                     .await
-                    .expect("[CONSUMER] basic ack error");
-                info!("[CONSUMER] return ack");
+                    .expect("basic ack error");
+                info!("return ack");
             }
         }
     });
