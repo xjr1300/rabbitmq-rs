@@ -14,3 +14,7 @@ tracing-subscriber = "0.3"
 [[bin]]
 name = "new_task"
 path = "src/new_task.rs"
+
+[[bin]]
+name = "worker"
+path = "src/worker.rs"

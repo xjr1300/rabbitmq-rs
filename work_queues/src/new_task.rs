@@ -1,20 +1,16 @@
-use common::{get_rabbitmq_address, set_default_logging_env, PERSISTENT_DELIVERY_MODE};
-use lapin::{options::BasicPublishOptions, BasicProperties, Connection, ConnectionProperties};
+use common::{set_default_logging_env, PERSISTENT_DELIVERY_MODE};
+use lapin::{options::BasicPublishOptions, BasicProperties};
 use tracing::info;
 
-use work_queues::{declare_queue, QUEUE_NAME};
+use work_queues::{connect, declare_queue, QUEUE_NAME};
 
 fn main() {
     set_default_logging_env();
 
     tracing_subscriber::fmt::init();
 
-    let address = get_rabbitmq_address();
-
     async_global_executor::block_on(async {
-        let conn = Connection::connect(&address, ConnectionProperties::default())
-            .await
-            .expect("connection error");
+        let conn = connect().await;
         info!("connected");
 
         let channel = conn.create_channel().await.expect("create channel error");

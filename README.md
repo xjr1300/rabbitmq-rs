@@ -217,4 +217,17 @@ channel.basic_qos(prefetch_count=1)
 もし、すべてのワーカーが忙しい場合、キューが埋め尽くされる可能性がある。
 それを監視してワーカーを追加するか、[メッセージTTL](https://www.rabbitmq.com/ttl.html)を使用することを推奨する。
 
+### 実行
 
+ターミナルを複数起動して、それぞれのターミナルでワーカーを実行する。
+その後、`プロデューサー`でメッセージを発行すると、メッセージが各ワーカーで処理される。
+
+```bash
+# ワーカーの起動
+cargo run --package work_queues --bin worker
+```
+
+```bash
+# プロデューサーの起動
+cargo run --package work_queues --bin new_task
+```
