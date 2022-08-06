@@ -1314,6 +1314,7 @@ name = "work_queues"
 version = "0.1.0"
 dependencies = [
  "async-global-executor",
+ "common",
  "futures-lite",
  "lapin",
  "tracing",

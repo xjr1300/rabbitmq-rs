@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 async-global-executor = "2.2"
+common = { path = "../common" }
 futures-lite = "1.12"
 lapin = "2.1"
 tracing = "0.1"
