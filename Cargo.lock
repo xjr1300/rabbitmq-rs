@@ -1305,6 +1305,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c811ca4a8c853ef420abd8592ba53ddbbac90410fab6903b3e79972a631f7680"
 
 [[package]]
+name = "work_queues"
+version = "0.1.0"
+dependencies = [
+ "async-global-executor",
+ "futures-lite",
+ "lapin",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "yasna"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

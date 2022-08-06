@@ -1,0 +1,15 @@
+[package]
+name = "work_queues"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+async-global-executor = "2.2"
+futures-lite = "1.12"
+lapin = "2.1"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+[[bin]]
+name = "producer"
+path = "src/producer.rs"
