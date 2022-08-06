@@ -1,4 +1,4 @@
-pub const RABBIT_MQ_URL: &str = "amqp://127.0.0.1:5672/%2f";
+pub const RABBITMQ_URL: &str = "amqp://127.0.0.1:5672/%2f";
 
 const RUST_LOG_KEY: &str = "RUST_LOG";
 const RUST_LOG_DEFAULT_VALUE: &str = "info";
