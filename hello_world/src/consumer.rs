@@ -7,18 +7,16 @@ use lapin::{
 };
 use tracing::info;
 
-use common::RABBITMQ_URL;
+use common::{get_rabbitmq_address, set_default_logging_env};
 
 use hello_world::{CONSUMER_TAG, QUEUE_NAME};
 
 fn main() {
-    if std::env::var("RUST_LOG").is_err() {
-        std::env::set_var("RUST_LOG", "info");
-    }
+    set_default_logging_env();
 
     tracing_subscriber::fmt::init();
 
-    let address = std::env::var("AMQP_ADDR").unwrap_or_else(|_| RABBITMQ_URL.into());
+    let address = get_rabbitmq_address();
 
     async_global_executor::block_on(async {
         // RabbitMQに接続

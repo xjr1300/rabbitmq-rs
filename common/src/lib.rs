@@ -8,3 +8,7 @@ pub fn set_default_logging_env() {
         std::env::set_var(RUST_LOG_KEY, RUST_LOG_DEFAULT_VALUE);
     }
 }
+
+pub fn get_rabbitmq_address() -> String {
+    std::env::var("AMQP_ADDR").unwrap_or_else(|_| RABBITMQ_URL.into())
+}

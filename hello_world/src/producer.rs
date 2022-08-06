@@ -5,7 +5,7 @@ use lapin::{
 };
 use tracing::info;
 
-use common::{set_default_logging_env, RABBITMQ_URL};
+use common::{get_rabbitmq_address, set_default_logging_env};
 
 use hello_world::QUEUE_NAME;
 
@@ -14,7 +14,7 @@ fn main() {
 
     tracing_subscriber::fmt::init();
 
-    let address = std::env::var("AMQP_ADDR").unwrap_or_else(|_| RABBITMQ_URL.into());
+    let address = get_rabbitmq_address();
 
     async_global_executor::block_on(async {
         // RabbitMQに接続
