@@ -1,10 +1,9 @@
-use tracing::info;
-
 use lapin::{
     options::{BasicPublishOptions, QueueDeclareOptions},
     types::FieldTable,
     BasicProperties, Connection, ConnectionProperties,
 };
+use tracing::info;
 
 use common::RABBIT_MQ_URL;
 
