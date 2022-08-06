@@ -7,7 +7,7 @@ use lapin::{
 };
 use tracing::info;
 
-use tutorial_1::{CONNECT_URL, CONSUMER_TAG, QUEUE_NAME};
+use hello_world::{CONNECT_URL, CONSUMER_TAG, QUEUE_NAME};
 
 fn main() {
     if std::env::var("RUST_LOG").is_err() {
