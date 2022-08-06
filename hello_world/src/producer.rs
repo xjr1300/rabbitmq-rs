@@ -1,21 +1,20 @@
-use tracing::info;
-
 use lapin::{
     options::{BasicPublishOptions, QueueDeclareOptions},
     types::FieldTable,
     BasicProperties, Connection, ConnectionProperties,
 };
+use tracing::info;
 
-use hello_world::{CONNECT_URL, QUEUE_NAME};
+use common::{get_rabbitmq_address, set_default_logging_env};
+
+use hello_world::QUEUE_NAME;
 
 fn main() {
-    if std::env::var("RUST_LOG").is_err() {
-        std::env::set_var("RUST_LOG", "info");
-    }
+    set_default_logging_env();
 
     tracing_subscriber::fmt::init();
 
-    let address = std::env::var("AMQP_ADDR").unwrap_or_else(|_| CONNECT_URL.into());
+    let address = get_rabbitmq_address();
 
     async_global_executor::block_on(async {
         // RabbitMQに接続
