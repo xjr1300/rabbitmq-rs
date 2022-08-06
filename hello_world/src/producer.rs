@@ -6,7 +6,9 @@ use lapin::{
     BasicProperties, Connection, ConnectionProperties,
 };
 
-use hello_world::{CONNECT_URL, QUEUE_NAME};
+use common::RABBIT_MQ_URL;
+
+use hello_world::QUEUE_NAME;
 
 fn main() {
     if std::env::var("RUST_LOG").is_err() {
@@ -15,7 +17,7 @@ fn main() {
 
     tracing_subscriber::fmt::init();
 
-    let address = std::env::var("AMQP_ADDR").unwrap_or_else(|_| CONNECT_URL.into());
+    let address = std::env::var("AMQP_ADDR").unwrap_or_else(|_| RABBIT_MQ_URL.into());
 
     async_global_executor::block_on(async {
         // RabbitMQに接続
