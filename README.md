@@ -369,3 +369,22 @@ channel.queue_bind(exchange="log", queue=result.method.queue)
 ```bash
 sudo rabbitmqctl list-bindings
 ```
+
+### 実行方法
+
+`receive_logs`コマンドを以下の2つの方法で起動する。
+
+```bash
+cargo run --package publish_subscribe --bin receive_logs > logs_from_rabbit.log
+```
+
+```bash
+cargo run --package publish_subscribe --bin receive_logs
+```
+
+`emit_log`コマンドを実行して、ログを発行する。
+
+```bash
+cargo run --package publish_subscribe --bin emit_log
+cargo run --package publish_subscribe --bin emit_log spam grok egg
+```
