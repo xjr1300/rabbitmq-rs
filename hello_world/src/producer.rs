@@ -1,13 +1,9 @@
-use lapin::{
-    options::{BasicPublishOptions, QueueDeclareOptions},
-    types::FieldTable,
-    BasicProperties,
-};
+use lapin::{options::BasicPublishOptions, BasicProperties};
 use tracing::info;
 
 use common::{connect, set_default_logging_env};
 
-use hello_world::QUEUE_NAME;
+use hello_world::{declare_queue, QUEUE_NAME};
 
 fn main() {
     set_default_logging_env();
@@ -24,14 +20,7 @@ fn main() {
         info!(state=?conn.status().state());
 
         // キューを定義
-        let queue = channel
-            .queue_declare(
-                QUEUE_NAME,
-                QueueDeclareOptions::default(),
-                FieldTable::default(),
-            )
-            .await
-            .expect("declare queue error");
+        let queue = declare_queue(&channel).await;
         info!(state=?conn.status().state());
         info!(?queue, "declared queue");
 
