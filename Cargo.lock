@@ -806,6 +806,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "routing"
+version = "0.1.0"
+dependencies = [
+ "async-global-executor",
+ "common",
+ "futures-lite",
+ "lapin",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "rustls"
 version = "0.20.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"

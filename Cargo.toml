@@ -1,3 +1,8 @@
 [workspace]
-
-members = ["common", "hello_world", "work_queues", "publish_subscribe"]
+members = [
+    "common",
+    "hello_world",
+    "work_queues",
+    "publish_subscribe",
+    "routing"
+]
