@@ -1,13 +1,9 @@
-use lapin::{
-    options::{BasicPublishOptions, ExchangeDeclareOptions},
-    types::FieldTable,
-    BasicProperties,
-};
+use lapin::{options::BasicPublishOptions, BasicProperties};
 use tracing::info;
 
 use common::{connect, set_default_logging_env};
 
-use publish_subscribe::EXCHANGE_NAME;
+use publish_subscribe::{declare_exchange, EXCHANGE_NAME};
 
 fn main() {
     set_default_logging_env();
@@ -26,16 +22,7 @@ fn main() {
         //
 
         // logsファンアウトエクスチェンジを作成
-        channel
-            .exchange_declare(
-                EXCHANGE_NAME,
-                lapin::ExchangeKind::Fanout,
-                ExchangeDeclareOptions::default(),
-                FieldTable::default(),
-            )
-            .await
-            .expect("exchange error");
-        info!("declared exchange");
+        declare_exchange(&channel).await;
 
         // 送信するメッセージを作成
         let args: Vec<String> = std::env::args().collect();
