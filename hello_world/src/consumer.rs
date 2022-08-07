@@ -43,7 +43,7 @@ fn main() {
         while let Some(delivery) = consumer.next().await {
             info!(message=?delivery, "received message");
             let message = String::from_utf8(delivery.as_ref().unwrap().data.clone()).unwrap();
-            info!("{}", format!("`{}` received", message));
+            info!("`{}` received", message);
             // メッセージを正常に処理したら、RabbitMQにメッセージを処理したことを示す肯定応答を返却
             if let Ok(delivery) = delivery {
                 delivery
