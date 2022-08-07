@@ -39,7 +39,7 @@ fn main() {
         while let Some(delivery) = consumer.next().await {
             info!(message=?delivery, "receive message");
             let message = String::from_utf8(delivery.as_ref().unwrap().data.clone()).unwrap();
-            info!("{}", format!("`{}` received", message));
+            info!("`{}` received", message);
             if let Ok(delivery) = delivery {
                 delivery
                     .ack(BasicAckOptions::default())
