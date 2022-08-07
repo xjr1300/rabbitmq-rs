@@ -1,5 +1,3 @@
-mod receive_log;
-
 use lapin::{options::ExchangeDeclareOptions, types::FieldTable, Channel, ExchangeKind};
 
 pub const EXCHANGE_NAME: &str = "logs";

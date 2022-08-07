@@ -16,5 +16,5 @@ name = "emit_log"
 path = "src/emit_log.rs"
 
 [[bin]]
-name = "receive_log"
-path = "src/receive_log.rs"
+name = "receive_logs"
+path = "src/receive_logs.rs"
