@@ -388,3 +388,102 @@ cargo run --package publish_subscribe --bin receive_logs
 cargo run --package publish_subscribe --bin emit_log
 cargo run --package publish_subscribe --bin emit_log spam grok egg
 ```
+
+## 4. ルーティング（Routing）
+
+[前のチュートリアル](https://www.rabbitmq.com/tutorials/tutorial-three-python.html)では、単純なロギングシステムを構築した。
+多くの受信者にログメッセージをブロードキャストできた。
+
+このチュートリアルでは、それに機能を追加するつもりである ー メッセージの部分集合だけを購読するようにするつもりである。
+例えば、すべてのログをコンソールにプリントする間に、クリティカルエラーメッセージのみをログファイルに送信する（ディスクに保存するために）。
+
+### バインディング（Binding）
+
+前の例において、バインディングを作成している。
+このようなコードを思い出すだろう。
+
+``python
+channel.queue_bind(exchange=exchange_name, queue=queue_name)
+```
+
+バインディングは、エクスチェンジとキューの間の関連である。
+これは単に以下のように読める。
+キューはこのエクスチェンジからきたメッセージに興味がある。
+
+バインディングは追加の`routing_key`パラメーターを受け取ることができる。
+`basic_publish`パラメーターとの混同を避けるために、`routing_key`を`binding key`と呼ぶ。
+このようにキーを使用してバインディングを作成できる。
+
+```python
+channel.queue_bind(exchange=exchange_name, queue=queue_name, routing_key="black")
+```
+
+バインディングキーの意味はエクスチェンジの種類に依存する。
+前に使用した`ファンアウトエクスチェンジ`は、単にバインディングキーの値を無視する。
+
+### ダイレクトエクスチェンジ（Direct Exchange）
+
+前のチュートリアルのロギングシステムは、すべてのコンシューマーにすべてのメッセージをブロードキャストした。
+それらの重要度に基づいてメッセージをフィルタリングできるように拡張する必要がある。
+例えば、受信したクリティカルエラーのみのログメッセージをディスクに書き込み、警告や情報ログメッセージでディスクスペースを浪費しないスクリプトが必要な場合である。
+
+`ファンアウトエクスチェンジ`を使用したが、それは十分な柔軟性を与えてくれない ー それは無意識にブロードキャストするだけである。
+
+代わりに`ダイレクトエクスチェンジ`を使用するつもりである。
+`ダイレクトエクスチェンジ`の背後にあるルーティングアルゴリズムは単純である ー メッセージはメッセージが持つ`ルーティングキー`と正確に一致する`バインディングキー`を持つキューに送信される。
+
+![ダイレクトエクスチェンジ](https://www.rabbitmq.com/img/tutorials/direct-exchange.png)
+
+それを想像するために、以下の構成を考える。
+
+* エクスチェンジからキューへの矢印についている文字列は、`ルーティングキー`を示す。
+
+この構成において、2つのキューにバインドされた`ダイレクトエクスチェンジX`を確認できる。
+最初のキューはバインディングキー`orange`にバインドされ、そして2つ目のキューは、バインディングキー`black`と`green`の2つのバインディングを持つ。
+
+そのような構成において、エクスチェンジに発行された`orange`をルーティングキーに持つメッセージは、`キューQ1`に配送される。
+ルーティングキーに`black`または`green`を持つメッセージは`Q2`に向かう。
+その他すべてのメッセージは廃棄される。
+
+### 複数バインディング（Multiple bindings）
+
+複数のキューを同じバインディングキーでバインドすることは完全に合法である。
+例において、バインディングキー`black`で`X`と`Q1間のバインディングを追加できる。
+この場合、`ダイレクトエクスチェンジ`は`ファンアウト`のように振る舞い、マッチングした全てのキューにメッセージがブロードキャストする。
+ルーティングキー`black`を持つメッセージは、`Q1`と`Q2`の両方に配送される。
+
+### ログの送出（Emitting logs）
+
+ロギングシステムにこのモデルを使用するつもりである。
+`ファンアウト`の代わりに`ダイレクトエクスチェンジ`にメッセージを送信するつもりである。
+`ルーティングキー`でログの重要度を提供するつもりである。
+このようにすれば、受信スクリプトは受信したい重要度を選択できるようになる。
+最初に、ログの送出に着目する。
+
+```python
+channel.exchange_declare(exchange="direct_log", exchange_type="direct")
+```
+
+そして、メッセージを送信する準備が整う。
+
+```python
+channel.basic_publish(exchange="direct_logs", routing_key=severity, body=message)
+```
+
+単純にするために、重要度に`info`、`warning`そして`error`のうち1つを想定する。
+
+### 購読（Subscribing）
+
+メッセージの受信は、1つの例外を除いて、前のチュートリアルのように動作する ー 興味のある重要度について新しいバインディングを作成する。
+
+```python
+result = channel.queue_declare(queue="", exclusive=True)
+queue_name = result.method.queue
+
+for severity in severities:
+  channel.queue_bind(exchange="direct_log", queue=queue_name, routing_key=severity)
+```
+
+### ルーティングチュートリアルの全容
+
+![ルーティングチュートリアルの全容](https://www.rabbitmq.com/img/tutorials/python-four.png)
