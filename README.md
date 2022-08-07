@@ -337,6 +337,8 @@ result = channel.queue_declare(queue="")
 この時点で、`result.method.queue`はランダムなキューの名前を含んでいる。
 例えば、それは`amq.gen-JzTY20BRgKO-HjmUJj0wLg`のように見えるだろう。
 
+![ランダムな名前を持つキュー](https://www.rabbitmq.com/img/tutorials/python-three-overall.png)
+
 2番目に、一旦、コンシューマーの接続が閉じられたら、キューは削除されなくてはならない。
 そのために`exclusive`フラグがある。
 
