@@ -5,9 +5,9 @@ use lapin::{
 };
 use tracing::info;
 
-use common::set_default_logging_env;
+use common::{connect, set_default_logging_env};
 
-use work_queues::{connect, declare_queue, QUEUE_NAME};
+use work_queues::{declare_queue, QUEUE_NAME};
 
 fn main() {
     set_default_logging_env();

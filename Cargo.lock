@@ -270,6 +270,9 @@ dependencies = [
 [[package]]
 name = "common"
 version = "0.1.0"
+dependencies = [
+ "lapin",
+]
 
 [[package]]
 name = "concurrent-queue"
@@ -740,6 +743,14 @@ dependencies = [
 [[package]]
 name = "publish_subscribe"
 version = "0.1.0"
+dependencies = [
+ "async-global-executor",
+ "common",
+ "futures-lite",
+ "lapin",
+ "tracing",
+ "tracing-subscriber",
+]
 
 [[package]]
 name = "quote"

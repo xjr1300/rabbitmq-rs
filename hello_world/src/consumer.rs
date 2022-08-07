@@ -1,28 +1,20 @@
 use futures_lite::stream::StreamExt;
 use lapin::options::BasicConsumeOptions;
-use lapin::{
-    options::{BasicAckOptions, QueueDeclareOptions},
-    types::FieldTable,
-    Connection, ConnectionProperties,
-};
+use lapin::{options::BasicAckOptions, types::FieldTable};
 use tracing::info;
 
-use common::{get_rabbitmq_address, set_default_logging_env};
+use common::{connect, set_default_logging_env};
 
-use hello_world::{CONSUMER_TAG, QUEUE_NAME};
+use hello_world::{declare_queue, CONSUMER_TAG, QUEUE_NAME};
 
 fn main() {
     set_default_logging_env();
 
     tracing_subscriber::fmt::init();
 
-    let address = get_rabbitmq_address();
-
     async_global_executor::block_on(async {
         // RabbitMQに接続
-        let conn = Connection::connect(&address, ConnectionProperties::default())
-            .await
-            .expect("connection error");
+        let conn = connect().await;
         info!("connected");
 
         // チャネルを作成
@@ -30,14 +22,7 @@ fn main() {
         info!(state=?conn.status().state());
 
         // キューを定義
-        let queue = channel
-            .queue_declare(
-                QUEUE_NAME,
-                QueueDeclareOptions::default(),
-                FieldTable::default(),
-            )
-            .await
-            .expect("declare queue error");
+        let queue = declare_queue(&channel).await;
         info!(state=?conn.status().state());
         info!(?queue, "declared queue");
 

@@ -1,3 +1,5 @@
+use lapin::{Connection, ConnectionProperties};
+
 pub const RABBITMQ_URL: &str = "amqp://127.0.0.1:5672/%2f";
 
 const RUST_LOG_KEY: &str = "RUST_LOG";
@@ -13,4 +15,11 @@ pub fn set_default_logging_env() {
 
 pub fn get_rabbitmq_address() -> String {
     std::env::var("AMQP_ADDR").unwrap_or_else(|_| RABBITMQ_URL.into())
+}
+
+pub async fn connect() -> Connection {
+    let address = get_rabbitmq_address();
+    Connection::connect(&address, ConnectionProperties::default())
+        .await
+        .expect("connection error")
 }
