@@ -270,6 +270,9 @@ dependencies = [
 [[package]]
 name = "common"
 version = "0.1.0"
+dependencies = [
+ "lapin",
+]
 
 [[package]]
 name = "concurrent-queue"
@@ -735,6 +738,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0a2ca2c61bc9f3d74d2886294ab7b9853abd9c1ad903a3ac7815c58989bb7bab"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "publish_subscribe"
+version = "0.1.0"
+dependencies = [
+ "async-global-executor",
+ "common",
+ "futures-lite",
+ "lapin",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

@@ -1,11 +1,13 @@
 use futures_lite::stream::StreamExt;
-use lapin::options::BasicConsumeOptions;
-use lapin::{options::BasicAckOptions, types::FieldTable};
+use lapin::{
+    options::{BasicAckOptions, BasicConsumeOptions, QueueBindOptions, QueueDeclareOptions},
+    types::FieldTable,
+};
 use tracing::info;
 
 use common::{connect, set_default_logging_env};
 
-use hello_world::{declare_queue, CONSUMER_TAG, QUEUE_NAME};
+use publish_subscribe::{declare_exchange, EXCHANGE_NAME};
 
 fn main() {
     set_default_logging_env();
@@ -13,25 +15,43 @@ fn main() {
     tracing_subscriber::fmt::init();
 
     async_global_executor::block_on(async {
-        // RabbitMQに接続
         let conn = connect().await;
         info!("connected");
 
-        // チャネルを作成
         let channel = conn.create_channel().await.expect("create channel error");
         info!(state=?conn.status().state());
 
-        // キューを定義
-        let queue = declare_queue(&channel).await;
-        info!(state=?conn.status().state());
-        info!(?queue, "declared queue");
+        // logsファンアウトエクスチェンジを作成
+        declare_exchange(&channel).await;
 
-        // キューにメッセージが到着することを待ち、メッセージを処理するコンシューマーを作成
+        // 名前を指定せずに、排他的なキューを作成
+        let queue_options = QueueDeclareOptions {
+            exclusive: true,
+            ..Default::default()
+        };
+        let queue = channel
+            .queue_declare("", queue_options, FieldTable::default())
+            .await
+            .expect("declare queue error");
+        info!("queue name is `{}`", queue.name());
+        println!("[*] Waiting for logs. To exist press Ctrl + C");
+
+        // チャンネルとキューをバインド
+        let _ = channel
+            .queue_bind(
+                queue.name().as_str(),
+                EXCHANGE_NAME,
+                "",
+                QueueBindOptions::default(),
+                FieldTable::default(),
+            )
+            .await;
+
         info!("will consume");
         let mut consumer = channel
             .basic_consume(
-                QUEUE_NAME,
-                CONSUMER_TAG,
+                queue.name().as_str(),
+                "receive_log",
                 BasicConsumeOptions::default(),
                 FieldTable::default(),
             )
@@ -39,12 +59,10 @@ fn main() {
             .expect("basic consume error");
         info!(state=?conn.status().state());
 
-        // コンシューマーが、キューにメッセージが到着することを待ち、メッセージを処理
         while let Some(delivery) = consumer.next().await {
             info!(message=?delivery, "received message");
             let message = String::from_utf8(delivery.as_ref().unwrap().data.clone()).unwrap();
-            info!("{}", format!("`{}` received", message));
-            // メッセージを正常に処理したら、RabbitMQにメッセージを処理したことを示す肯定応答を返却
+            info!("`{}` received", message);
             if let Ok(delivery) = delivery {
                 delivery
                     .ack(BasicAckOptions::default())

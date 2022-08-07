@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "AMQP",
+        "fanout",
         "rabbitmq",
         "rabbitmqctl"
     ]

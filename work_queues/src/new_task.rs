@@ -1,8 +1,9 @@
-use common::{set_default_logging_env, PERSISTENT_DELIVERY_MODE};
 use lapin::{options::BasicPublishOptions, BasicProperties};
 use tracing::info;
 
-use work_queues::{connect, declare_queue, QUEUE_NAME};
+use common::{connect, set_default_logging_env, PERSISTENT_DELIVERY_MODE};
+
+use work_queues::{declare_queue, QUEUE_NAME};
 
 fn main() {
     set_default_logging_env();

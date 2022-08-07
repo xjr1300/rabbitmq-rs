@@ -1,11 +1,11 @@
 use lapin::{
     options::{BasicPublishOptions, QueueDeclareOptions},
     types::FieldTable,
-    BasicProperties, Connection, ConnectionProperties,
+    BasicProperties,
 };
 use tracing::info;
 
-use common::{get_rabbitmq_address, set_default_logging_env};
+use common::{connect, set_default_logging_env};
 
 use hello_world::QUEUE_NAME;
 
@@ -14,13 +14,9 @@ fn main() {
 
     tracing_subscriber::fmt::init();
 
-    let address = get_rabbitmq_address();
-
     async_global_executor::block_on(async {
         // RabbitMQに接続
-        let conn = Connection::connect(&address, ConnectionProperties::default())
-            .await
-            .expect("connection error");
+        let conn = connect().await;
         info!("connected");
 
         // チャネルを作成
