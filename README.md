@@ -487,3 +487,25 @@ for severity in severities:
 ### ルーティングチュートリアルの全容
 
 ![ルーティングチュートリアルの全容](https://www.rabbitmq.com/img/tutorials/python-four.png)
+
+### 実行方法
+
+警告とエラーログを受信してファイルに出力するコンシューマーを起動する。
+
+```bash
+cargo run --package routing --bin receive_logs_direct warn error > logs_from_rabbit.log
+```
+
+情報、警告及びエラー（すべての）ログを受信して標準出力に出力するコンシューマーを起動する。
+
+```bash
+cargo run --package routing --bin receive_logs_direct info warn error
+```
+
+ログを送信する。
+
+```bash
+cargo run --package routing --bin emit_log_direct info "[info] Run. Run. Or it will explode."
+cargo run --package routing --bin emit_log_direct warn "[warn] Run. Run. Or it will explode."
+cargo run --package routing --bin emit_log_direct error "[error] Run. Run. Or it will explode."
+```
