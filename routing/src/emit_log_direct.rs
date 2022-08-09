@@ -12,7 +12,7 @@ fn main() {
 
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 2 {
-        panic!("Severity not found.")
+        panic!("Severity didn't find in arguments.")
     }
 
     // 重要度をコマンドラインから取得
