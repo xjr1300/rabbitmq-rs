@@ -3,36 +3,30 @@ use lapin::{
     options::{BasicAckOptions, BasicConsumeOptions, QueueBindOptions, QueueDeclareOptions},
     types::FieldTable,
 };
-
+use topics::{declare_exchange, EXCHANGE_NAME};
 use tracing::info;
 
 use common::{connect, set_default_logging_env};
-
-use routing::{declare_exchange, Severity, EXCHANGE_NAME};
 
 fn main() {
     set_default_logging_env();
 
     tracing_subscriber::fmt::init();
 
-    // 受信するログの重要度を取得
-    let args: Vec<String> = std::env::args().collect();
+    // バインディングキーをコマンドライン引数から取得
+    let mut args: Vec<String> = std::env::args().collect();
     if args.len() < 2 {
-        panic!("Severity didn't find in arguments.")
+        panic!("Binding Key didn't find in arguments.");
     }
-
-    // コマンドライン引数から受信するログの重要度を複数取得
-    let severities = args[1..]
-        .iter()
-        .map(|value| Severity::try_from(value.as_str()).unwrap());
+    let binding_keys: Vec<String> = args.drain(1..).collect();
 
     async_global_executor::block_on(async {
         let conn = connect().await;
         info!("connected");
 
-        let channel = conn.create_channel().await.expect("create channel error");
+        let channel = conn.create_channel().await.expect("create queue error");
 
-        // ダイレクトエクスチェンジを作成
+        // トピックエクスチェンジを作成
         declare_exchange(&channel).await;
 
         // 名前を指定せずに、永続的なキューを定義
@@ -45,25 +39,25 @@ fn main() {
             .await
             .expect("declare queue error");
 
-        // キューとエクスチェンジを重要度を示すルーティングキーでバインド
-        for severity in severities {
+        // バインディングキーでエクスチェンジとキューをバインド
+        for binding_key in binding_keys.iter() {
             channel
                 .queue_bind(
                     queue.name().as_str(),
                     EXCHANGE_NAME,
-                    &format!("{}", severity),
+                    binding_key,
                     QueueBindOptions::default(),
                     FieldTable::default(),
                 )
                 .await
-                .expect("binding error");
+                .expect("queue bind error");
         }
 
         info!("will consume");
         let mut consumer = channel
             .basic_consume(
                 queue.name().as_str(),
-                "receive_logs_direct",
+                "receive_logs_topic",
                 BasicConsumeOptions::default(),
                 FieldTable::default(),
             )

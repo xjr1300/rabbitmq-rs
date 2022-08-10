@@ -4,5 +4,6 @@ members = [
     "hello_world",
     "work_queues",
     "publish_subscribe",
-    "routing"
+    "routing",
+    "topics",
 ]

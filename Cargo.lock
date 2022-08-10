@@ -1062,6 +1062,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cda74da7e1a664f795bb1f8a87ec406fb89a02522cf6e50620d016add6dbbf5c"
 
 [[package]]
+name = "topics"
+version = "0.1.0"
+dependencies = [
+ "async-global-executor",
+ "common",
+ "futures-lite",
+ "lapin",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "tracing"
 version = "0.1.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"

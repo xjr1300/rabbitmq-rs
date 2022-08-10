@@ -1,0 +1,20 @@
+[package]
+name = "topics"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+async-global-executor = "2.2"
+common = { path = "../common" }
+futures-lite = "1.12"
+lapin = "2.1"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+[[bin]]
+name = "emit_log_topic"
+path = "src/emit_log_topic.rs"
+
+[[bin]]
+name = "receive_logs_topic"
+path = "src/receive_logs_topic.rs"
