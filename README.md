@@ -579,3 +579,29 @@ cargo run --package routing --bin emit_log_direct error "[error] Run. Run. Or it
 `<facility>.<severity>`の2つのワードを持つルーティングキーのログを想定して作業する。
 
 そのコードはほとんど[前のチュートリアル](https://www.rabbitmq.com/tutorials/tutorial-four-python.html)と同じである。
+
+### 実行方法
+
+各ターミナルでコンシューマーを起動する。
+
+```bash
+cargo run --package topics --bin receive_logs_topic "#"
+```
+
+```bash
+cargo run --package topics --bin receive_logs_topic "kern.*"
+```
+
+```bash
+cargo run --package topics --bin receive_logs_topic "*.critical"
+```
+
+```bash
+cargo run --package topics --bin receive_logs_topic "kern.*" "*.critical"
+```
+
+プロデューサーからログを送信する。
+
+```bash
+cargo run --package topics --bin emit_log_topic "kern.critical" "A critical kernel error"
+```
